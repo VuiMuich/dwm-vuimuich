@@ -14,15 +14,15 @@ static const int topbar             = 1;     /* 0 means bottom bar */
 static const Bool viewontag         = True;     /* Switch view on tag switch */
 static const char *fonts[]          = { "MesloLGS Nerd Font Mono:size=12" };
 static const char dmenufont[]       = "MesloLGS Nerd Font Mono:size=12";
-static const char col_gray1[]       = "#2E3440";
-static const char col_gray2[]       = "#3B4252";
-static const char col_gray3[]       = "#D8DEE9";
-static const char col_gray4[]       = "#ECEFF4";
-static const char col_cyan[]        = "#434C5E";
+static const char col_gray1[]       = "#212325";
+static const char col_gray2[]       = "#323437";
+static const char col_gray3[]       = "#dcd8cf";
+static const char col_gray4[]       = "#f2ecde";
+static const char col_yellow[]      = "#e2b714";
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
 	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
-	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
+	[SchemeSel]  = { col_gray4, col_yellow,  col_yellow  },
 };
 
 /* tagging */
@@ -37,13 +37,15 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class     instance  title           tags mask  isfloating  isterminal  noswallow  monitor */
-	{ "Gimp",    NULL,     NULL,           0,         1,          0,           0,        -1 },
-	{ "Firefox", NULL,     NULL,           1 << 8,    0,          0,          -1,        -1 },
-  { "steam",   NULL,     NULL,           1 << 8,    0,          0,           0,	       -1 },
-	{ "St",      NULL,     NULL,           0,         0,          1,           0,        -1 },
-	{ "kitty",   NULL,     NULL,           0,         0,          1,           0,        -1 },
-	{ NULL,      NULL,     "Event Tester", 0,         0,          0,           1,        -1 }, /* xev */
+	/* class         instance  title           tags mask  isfloating  isterminal  noswallow  monitor */
+	{ "Gimp",        NULL,     NULL,           0,         1,          0,           0,        -1 },
+	{ "Firefox",     NULL,     NULL,           1 << 8,    0,          0,          -1,        -1 },
+	{ "qutebrowser", NULL,     NULL,           1 << 8,    0,          0,          -1,        -1 },
+  { "steam",       NULL,     NULL,           1 << 8,    0,          0,           0,	       -1 },
+	{ "St",          NULL,     NULL,           0,         0,          1,           0,        -1 },
+	{ "kitty",       NULL,     NULL,           0,         0,          1,           0,        -1 },
+	{ "alacritty",   NULL,     NULL,           0,         0,          1,           0,        -1 },
+	{ NULL,          NULL,     "Event Tester", 0,         0,          0,           1,        -1 }, /* xev */
 };
 
 /* layout(s) */
@@ -72,53 +74,53 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
-static const char *termcmd[]  = { "kitty", NULL };
+static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_yellow, "-sf", col_gray4, NULL };
+static const char *termcmd[]  = { "alacritty", NULL };
 
 static Key keys[] = {
-	/* modifier                     key        function        argument */
-	{ MODKEY,                       XK_r,      spawn,          {.v = dmenucmd } },
-  { MODKEY,                       XK_x,      spawn,          {.v = termcmd } },
-  { MODKEY,                       XK_b,      spawn,          SHCMD ("brave")},
-  { MODKEY,                       XK_e,      spawn,          SHCMD ("thunar")},
-  { 0,                            0x1008ff02, spawn,         SHCMD ("xbacklight -inc 10")},
-  { 0,                            0x1008ff03, spawn,         SHCMD ("xbacklight -dec 10")},
-  { 0,                            0x1008ff11, spawn,         SHCMD ("amixer sset Master 5%- unmute")},
-  { 0,                            0x1008ff12, spawn,         SHCMD ("amixer sset Master mute ")},
-	{ 0,                            0x1008ff13, spawn,         SHCMD ("amixer sset Master 5%+ unmute")},
-	{ MODKEY|ShiftMask,             XK_b,      togglebar,      {0} },
-	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
-	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
-	{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
-	{ MODKEY,                       XK_d,      incnmaster,     {.i = -1 } },
-	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
-	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
-	{ MODKEY,                       XK_Return, zoom,           {0} },
-	{ MODKEY,                       XK_Tab,    view,           {0} },
-	{ MODKEY,                       XK_q,      killclient,     {0} },
-	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
-  { MODKEY,                       XK_m,      fullscreen,     {0} },
-	{ MODKEY,                       XK_space,  setlayout,      {0} },
-	{ MODKEY|ShiftMask,             XK_m,      togglefloating, {0} },
-	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
-	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
-	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
-	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
-	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
-	TAGKEYS(                        XK_1,                      0)
-	TAGKEYS(                        XK_2,                      1)
-	TAGKEYS(                        XK_3,                      2)
-	TAGKEYS(                        XK_4,                      3)
-	TAGKEYS(                        XK_5,                      4)
-	TAGKEYS(                        XK_6,                      5)
-	TAGKEYS(                        XK_7,                      6)
-	TAGKEYS(                        XK_8,                      7)
-	TAGKEYS(                        XK_9,                      8)
-	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
-	{ MODKEY|ControlMask|ShiftMask, XK_r,      spawn,          SHCMD("reboot")},
-	{ MODKEY|ControlMask|ShiftMask, XK_s,      spawn,          SHCMD("shutdown now")},
+	/* modifier                     key         function        argument */
+	{ MODKEY,                       XK_r,       spawn,          {.v = dmenucmd } },
+  { MODKEY|ShiftMask,             XK_Return,  spawn,          {.v = termcmd } },
+  { MODKEY,                       XK_b,       spawn,          SHCMD ("brave")},
+  { MODKEY,                       XK_e,       spawn,          SHCMD ("thunar")},
+  { 0,                            0x1008ff02, spawn,          SHCMD ("xbacklight -inc 10")},
+  { 0,                            0x1008ff03, spawn,          SHCMD ("xbacklight -dec 10")},
+  { 0,                            0x1008ff11, spawn,          SHCMD ("amixer sset Master 5%- unmute")},
+  { 0,                            0x1008ff12, spawn,          SHCMD ("amixer sset Master mute ")},
+	{ 0,                            0x1008ff13, spawn,          SHCMD ("amixer sset Master 5%+ unmute")},
+	{ MODKEY|ShiftMask,             XK_b,       togglebar,      {0} },
+	{ MODKEY,                       XK_j,       focusstack,     {.i = +1 } },
+	{ MODKEY,                       XK_k,       focusstack,     {.i = -1 } },
+	{ MODKEY,                       XK_i,       incnmaster,     {.i = +1 } },
+	{ MODKEY,                       XK_d,       incnmaster,     {.i = -1 } },
+	{ MODKEY,                       XK_h,       setmfact,       {.f = -0.05} },
+	{ MODKEY,                       XK_l,       setmfact,       {.f = +0.05} },
+	{ MODKEY,                       XK_Return,  zoom,           {0} },
+	{ MODKEY,                       XK_Tab,     view,           {0} },
+	{ MODKEY,                       XK_q,       killclient,     {0} },
+	{ MODKEY,                       XK_t,       setlayout,      {.v = &layouts[0]} },
+	{ MODKEY,                       XK_f,       setlayout,      {.v = &layouts[1]} },
+  { MODKEY,                       XK_m,       fullscreen,     {0} },
+	{ MODKEY,                       XK_space,   setlayout,      {0} },
+	{ MODKEY|ShiftMask,             XK_m,       togglefloating, {0} },
+	{ MODKEY,                       XK_0,       view,           {.ui = ~0 } },
+	{ MODKEY|ShiftMask,             XK_0,       tag,            {.ui = ~0 } },
+	{ MODKEY,                       XK_comma,   focusmon,       {.i = -1 } },
+	{ MODKEY,                       XK_period,  focusmon,       {.i = +1 } },
+	{ MODKEY|ShiftMask,             XK_comma,   tagmon,         {.i = -1 } },
+	{ MODKEY|ShiftMask,             XK_period,  tagmon,         {.i = +1 } },
+	TAGKEYS(                        XK_1 ,                      0)
+	TAGKEYS(                        XK_2 ,                      1)
+	TAGKEYS(                        XK_3 ,                      2)
+	TAGKEYS(                        XK_4 ,                      3)
+	TAGKEYS(                        XK_5 ,                      4)
+	TAGKEYS(                        XK_6 ,                      5)
+	TAGKEYS(                        XK_7 ,                      6)
+	TAGKEYS(                        XK_8 ,                      7)
+	TAGKEYS(                        XK_9 ,                      8)
+	{ MODKEY|ShiftMask,             XK_q,       quit,           {0} },
+	{ MODKEY|ControlMask|ShiftMask, XK_r,       spawn,          SHCMD("reboot")},
+	{ MODKEY|ControlMask|ShiftMask, XK_s,       spawn,          SHCMD("shutdown now")},
 };
 
 /* button definitions */
