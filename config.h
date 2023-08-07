@@ -8,9 +8,9 @@ static const unsigned int systraypinning = 0;   /* 0: sloppy systray follows sel
 static const unsigned int systrayonleft = 0;   	/* 0: systray in the right corner, >0: systray on left of status text */
 static const unsigned int systrayspacing = 2;   /* systray spacing */
 static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
-static const int showsystray        = 1;     /* 0 means no systray */
-static const int showbar            = 1;     /* 0 means no bar */
-static const int topbar             = 1;     /* 0 means bottom bar */
+static const int showsystray        = 1;        /* 0 means no systray */
+static const int showbar            = 1;        /* 0 means no bar */
+static const int topbar             = 1;        /* 0 means bottom bar */
 static const Bool viewontag         = True;     /* Switch view on tag switch */
 static const char *fonts[]          = { "MesloLGS Nerd Font Mono:size=12" };
 static const char dmenufont[]       = "MesloLGS Nerd Font Mono:size=12";
@@ -23,6 +23,19 @@ static const char *colors[][3]      = {
 	/*               fg         bg         border   */
 	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
 	[SchemeSel]  = { col_gray4, col_yellow,  col_yellow  },
+};
+
+static const char *const autostart[] = {
+	"xsetroot", "-cursor_name", "left_ptr", NULL,
+  "kitty", NULL,
+  "flameshot", NULL,
+  "lxpolkit", NULL,
+  "dunst", NULL,
+	"picom", NULL,
+  "sh", "-c", "$HOME/dwm-titus/scripts/status", NULL,
+  "sh", "-c", "$HOME/dwm-titus/scripts/dbus", NULL,
+  "feh", "--bg-max", "$HOME/Pictures/background.jpg", NULL,
+	NULL /* terminate */
 };
 
 /* tagging */
@@ -131,7 +144,7 @@ static Button buttons[] = {
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 	{ ClkWinTitle,          0,              Button2,        zoom,           {0} },
 	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd } },
-/* placemouse options, choose which feels more natural:
+	/* placemouse options, choose which feels more natural:
 	 *    0 - tiled position is relative to mouse cursor
 	 *    1 - tiled postiion is relative to window center
 	 *    2 - mouse pointer warps to window center
